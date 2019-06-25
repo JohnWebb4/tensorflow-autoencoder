@@ -103,6 +103,10 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# Pycharm
+.idea/workspace.xml
+
 # Files
 src/*
 !src/train.py
+!src/deepfake.py
