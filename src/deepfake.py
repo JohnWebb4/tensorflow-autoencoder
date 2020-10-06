@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import tensorflow as tf
 
+import cv2
 import glob
 import sys
 import time
@@ -24,9 +25,8 @@ INPUT_MAX_DIM = 512
 
 
 def load_img(path_to_img):
-    img = tf.io.read_file(path_to_img)
-    img = tf.image.decode_jpeg(img, channels=3)
-    img = tf.image.convert_image_dtype(img, tf.float32)
+    img = cv2.imread(path_to_img, 1)
+    img.astype(float)
 
     shape = tf.cast(tf.shape(img)[:-1], tf.float32)
     long_dim = tf.math.reduce_max(shape)
@@ -43,8 +43,8 @@ def load_img(path_to_img):
 train_images = tf.stack([load_img(train_path) for train_path in train_file_paths])
 test_images = tf.stack([load_img(test_path) for test_path in test_file_paths])
 
-train_images = tf.reshape(train_images, [train_images.shape[0], INPUT_MAX_DIM, INPUT_MAX_DIM, 1]).astype("float32")
-test_images = tf.reshape(test_images, [test_images.shape[0], INPUT_MAX_DIM, INPUT_MAX_DIM, 1]).astype("float32")
+train_images = tf.reshape(train_images, [train_images.shape[0], INPUT_MAX_DIM, -1, 3])
+test_images = tf.reshape(test_images, [test_images.shape[0], INPUT_MAX_DIM, -1, 3])
 
 # Normalize
 train_images /= 255
